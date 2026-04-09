@@ -1,0 +1,25 @@
+# Blockchain Indexer Configuration
+
+app:
+  name: "Blockchain Indexer"
+  version: "2.0.0"
+  debug: false
+
+features:
+  - 100M events
+  - Real-time
+  - Multi-chain
+
+tech_stack:
+  - Web3.py
+  - Solana-py
+  - PostgreSQL
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+
+logging:
+  level: INFO
+  format: "%(asctime)s | %(levelname)s | %(message)s"
