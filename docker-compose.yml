@@ -1,12 +1,27 @@
 version: '3.8'
 
 services:
-  app:
+  indexer:
     build: .
     ports:
       - "8000:8000"
-    volumes:
-      - ./config:/app/config:ro
     environment:
+      - ETH_RPC=${ETH_RPC:-https://eth.llamarpc.com}
+      - BSC_RPC=${BSC_RPC:-https://bsc-dataseed.binance.org}
+      - POLYGON_RPC=${POLYGON_RPC:-https://polygon.llamarpc.com}
       - LOG_LEVEL=INFO
-    restart: unless-stopped
+    volumes:
+      - indexer_data:/app/data
+      - ./indexer:/app/indexer
+    command: python -m uvicorn indexer.main:app --host 0.0.0.0 --port 8000 --reload
+
+  indexer-worker:
+    build: .
+    environment:
+      - ETH_RPC=${ETH_RPC:-https://eth.llamarpc.com}
+    volumes:
+      - indexer_data:/app/data
+    command: python -c "from indexer.main import EVMIndexer, db; import asyncio; asyncio.run(db.initialize()); print('Worker ready')"
+
+volumes:
+  indexer_data:
